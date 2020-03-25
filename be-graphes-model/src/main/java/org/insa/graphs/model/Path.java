@@ -198,11 +198,35 @@ public class Path {
      * 
      * @return true if the path is valid, false otherwise.
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public boolean isValid() {
+    	boolean retBool = false;
+    	Arc arc1;
+    	Arc arc2;
+    	int cpt = 0;
+    	//it is empty;
+    	if (isEmpty()) {
+    		retBool = true;
+    	//it contains a single node (without arcs);
+    	} else if (size() == 1) {
+    		retBool = true;
+    	} else {
+    		//the first arc has for origin the origin of the path
+    		if (this.arcs.get(0).getOrigin() == this.origin) {
+    			arc1 = this.arcs.get(cpt);
+				arc2 = this.arcs.get(cpt+1);
+    			while((cpt + 1) < size()) {
+    				if (!(arc1.getDestination().equals(arc2.getOrigin()))) {
+    					return false;
+    				}
+    				cpt++;
+    			}
+    			retBool = true;
+    		}
+    	}
         // TODO:
-        return false;
+        return retBool;
     }
 
     /**
@@ -210,11 +234,16 @@ public class Path {
      * 
      * @return Total length of the path (in meters).
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public float getLength() {
         // TODO:
-        return 0;
+    	int longueur = 0;
+    	for (Arc intermed : this.arcs) {
+    		longueur += intermed.getLength();
+    	}
+
+        return longueur;
     }
 
     /**
@@ -225,11 +254,11 @@ public class Path {
      * @return Time (in seconds) required to travel this path at the given speed (in
      *         kilometers-per-hour).
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public double getTravelTime(double speed) {
         // TODO:
-        return 0;
+    	return getLength() / (speed / 3.6);
     }
 
     /**
