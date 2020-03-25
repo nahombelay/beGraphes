@@ -213,6 +213,7 @@ public class Path {
     		retBool = true;
     	} else {
     		//the first arc has for origin the origin of the path
+    		
     		if (this.arcs.get(0).getOrigin() == this.origin) {
     			arc1 = this.arcs.get(cpt);
 				arc2 = this.arcs.get(cpt+1);
@@ -238,7 +239,7 @@ public class Path {
      */
     public float getLength() {
         // TODO:
-    	int longueur = 0;
+    	float longueur = 0;
     	for (Arc intermed : this.arcs) {
     		longueur += intermed.getLength();
     	}
@@ -267,11 +268,15 @@ public class Path {
      * 
      * @return Minimum travel time to travel this path (in seconds).
      * 
-     * @deprecated Need to be implemented.
+     *  Need to be implemented.
      */
     public double getMinimumTravelTime() {
         // TODO:
-        return 0;
+    	double minTime = 0;
+    	for (Arc intermed : this.arcs) {
+    		minTime += (intermed.getLength()) / ((intermed.getRoadInformation().getMaximumSpeed()) / 3.6);
+    	}
+        return minTime;
     }
 
 }
