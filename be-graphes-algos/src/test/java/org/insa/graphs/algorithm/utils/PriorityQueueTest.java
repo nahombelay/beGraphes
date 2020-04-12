@@ -243,8 +243,10 @@ public abstract class PriorityQueueTest {
 
     @Test
     public void testDeleteThenRemove() {
+    	
         Assume.assumeFalse(queue.isEmpty());
         while (!queue.isEmpty()) {
+        	System.out.println(queue);
             MutableInteger min = queue.deleteMin();
             try {
                 queue.remove(min);
@@ -254,10 +256,12 @@ public abstract class PriorityQueueTest {
                 assertEquals(min, e.getElement());
             }
         }
+        
     }
 
     @Test
     public void testRemoveTwice() {
+
         Assume.assumeFalse(queue.isEmpty());
         for (MutableInteger data: parameters.data) {
             PriorityQueue<MutableInteger> copyQueue = this.createQueue(this.queue);
