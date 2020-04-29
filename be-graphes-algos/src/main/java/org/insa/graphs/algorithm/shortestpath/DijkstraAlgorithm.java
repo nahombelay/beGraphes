@@ -4,7 +4,6 @@ import java.util.*;
 
 
 import org.insa.graphs.model.*;
-import org.insa.graphs.algorithm.*;
 import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
 import org.insa.graphs.algorithm.utils.ElementNotFoundException;
@@ -42,12 +41,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	labelArray[i] = new Label(nodeArray.get(i));
         }
         
+        //variables pas nécessaire mais plus propre
         Node origin = data.getOrigin();
-        Label originLabel = labelArray[data.getOrigin().getId()];
+        Label originL = labelArray[data.getOrigin().getId()];
         Node destination = data.getDestination();
-        Label destinationLabel = labelArray[data.getDestination().getId()];
+        Label destinationL = labelArray[data.getDestination().getId()];
         
-        
+        //variables pour compter 
+        int cptArc = 0;
+        int cptIter = 0;
         
         //initialisation du tas
         BinaryHeap<Label> heap = new BinaryHeap<>();
@@ -65,46 +67,51 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	notifyNodeMarked(x.sommetCourant());
         	
         	for (Arc iter: x.sommetC.getSuccessors()) {
-        		
-        		Label y = labelArray[iter.getDestination().getId()];
-        		notifyNodeReached(iter.getDestination());
-        		
-        		if(! y.estMarque()) {
-        			if (y.getCout() > x.getCout() + data.getCost(iter)) {
-        				try {
-        					heap.remove(y);
-        				} catch(ElementNotFoundException e) {
-        					;
-    		    		}
-        				y.setCout(x.getCout() + data.getCost(iter));
-        				y.setPere(iter);
-        				heap.insert(y);
-        			}
+        		if (data.isAllowed(iter)) {
+	        		Label y = labelArray[iter.getDestination().getId()];
+	        		notifyNodeReached(iter.getDestination());
+	        		
+	        		if(! y.estMarque()) {
+		        			if (y.getCout() > x.getCout() + data.getCost(iter)) {
+		        				try {
+		        					heap.remove(y);
+		        				} catch(ElementNotFoundException e) {
+		        					;
+		    		    		}
+		        				y.setCout(x.getCout() + data.getCost(iter));
+		        				y.setPere(iter);
+		        				heap.insert(y);
+		        			}
+	        		}
         		}
+        		cptArc++;
         	}
-        	
+        	cptIter++;
         }
         // Destination has no predecessor, the solution is infeasible...
         
-        if(destinationLabel.estMarque() == false) {
+        if(destinationL.estMarque() == false) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         } else {
         	// The destination has been found, notify the observers.
             notifyDestinationReached(data.getDestination());
             
-            // Create the path from the array of predecessors...
+         // Create the path from the array of predecessors...
         	ArrayList<Arc> arcs = new ArrayList<>();
         	
-        	while(!x.equals(originLabel)) {
+        	while(!x.equals(originL)) {
         		arcs.add(x.getPere());
         		x = labelArray[x.getPere().getOrigin().getId()];
+        		//verification bien Dij: oui décroissant 
+        		//System.out.println("cout label: " + x.getCout());
         	}
         	// Reverse the path...
             Collections.reverse(arcs);
             // Create the final solution.
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
         }
-        
+        //verification nbr arc et iterations
+        //System.out.println("Nbr arcs: " + cptArc + " NbrIer : " + cptIter);
         return solution;
     }
 
