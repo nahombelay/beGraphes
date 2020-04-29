@@ -26,11 +26,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Graph graph = data.getGraph();
 
         final int nbNodes = graph.size();
-
-        // Initialize array of distances.
-        double[] distances = new double[nbNodes];
-        Arrays.fill(distances, Double.POSITIVE_INFINITY);
-        distances[data.getOrigin().getId()] = 0;
+        
         
         // Notify observers about the first event (origin processed).
         notifyOriginProcessed(data.getOrigin());
@@ -47,23 +43,26 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         
         Node origin = data.getOrigin();
-        Node destination = data.getDestination();
         Label originLabel = labelArray[data.getOrigin().getId()];
+        Node destination = data.getDestination();
         Label destinationLabel = labelArray[data.getDestination().getId()];
-        labelArray[origin.getId()].setCout(0);
+        
         
         
         //initialisation du tas
         BinaryHeap<Label> heap = new BinaryHeap<>();
         
         //on insere origin dans le tas
+        labelArray[origin.getId()].setCout(0);
         heap.insert(labelArray[origin.getId()]);
         
         Label x = null;
         
         while (!labelArray[destination.getId()].estMarque()) {
-        	x = heap.deleteMin();
-        	x.estMarque();
+        	x = heap.findMin();
+        	heap.remove(x);
+        	x.marquer();
+        	notifyNodeMarked(x.sommetCourant());
         	
         	for (Arc iter: x.sommetC.getSuccessors()) {
         		
@@ -71,17 +70,12 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         		notifyNodeReached(iter.getDestination());
         		
         		if(! y.estMarque()) {
-        			
         			if (y.getCout() > x.getCout() + data.getCost(iter)) {
-        				
-        				
         				try {
         					heap.remove(y);
-        					
         				} catch(ElementNotFoundException e) {
-        					
+        					;
     		    		}
-        				
         				y.setCout(x.getCout() + data.getCost(iter));
         				y.setPere(iter);
         				heap.insert(y);
@@ -90,7 +84,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	}
         	
         }
-
         // Destination has no predecessor, the solution is infeasible...
         
         if(destinationLabel.estMarque() == false) {
@@ -100,7 +93,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             notifyDestinationReached(data.getDestination());
             
             // Create the path from the array of predecessors...
-        	ArrayList<Arc> arcs = new ArrayList<Arc>();
+        	ArrayList<Arc> arcs = new ArrayList<>();
+        	
         	while(!x.equals(originLabel)) {
         		arcs.add(x.getPere());
         		x = labelArray[x.getPere().getOrigin().getId()];
@@ -110,8 +104,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
             // Create the final solution.
             solution = new ShortestPathSolution(data, Status.OPTIMAL, new Path(graph, arcs));
         }
-        
-        
         
         return solution;
     }
