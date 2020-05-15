@@ -4,10 +4,10 @@ import org.insa.graphs.model.*;
 
 public class Label implements Comparable<Label>{
 	
-	Node sommetC;
-	Arc sommetP;
-	double cout;
-	boolean marque;
+	private Node sommetC;
+	private Arc sommetP;
+	protected double cout;
+	private boolean marque;
 	
 	
 	public Label(Node sommetC) {
@@ -49,7 +49,6 @@ public class Label implements Comparable<Label>{
 
 	@Override
 	public int compareTo(Label other) {
-		// TODO Auto-generated method stub
 		return Double.compare(this.cout, other.getCout());
 	}
 	

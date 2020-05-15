@@ -8,39 +8,46 @@ import org.insa.graphs.algorithm.AbstractSolution.Status;
 import org.insa.graphs.algorithm.utils.BinaryHeap;
 import org.insa.graphs.algorithm.utils.ElementNotFoundException;
 
-
+@SuppressWarnings("unused")
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 
+	
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
     }
-
+    
     @Override
-    protected ShortestPathSolution doRun() {
+    public ShortestPathSolution doRun() {
+    	
         final ShortestPathData data = getInputData();
-        ShortestPathSolution solution = null;
-        // TODO:
         
         // Retrieve the graph.
         Graph graph = data.getGraph();
-
         final int nbNodes = graph.size();
         
-        
-        // Notify observers about the first event (origin processed).
-        notifyOriginProcessed(data.getOrigin());
-
         //initialisation de la liste des labels
         Label[] labelArray = new Label[nbNodes];
         
         //initilaisation de la liste des nodes
-        List<Node> nodeArray = graph.getNodes();
+        List<Node> nodes = graph.getNodes();
+        //l'initialisation des labels
         
-        //initialisation des labels
         for (int i = 0; i < nbNodes; i++) {
-        	labelArray[i] = new Label(nodeArray.get(i));
+        	labelArray[i] = new Label(nodes.get(i));
+        	
         }
         
+        return djikstraRun(labelArray, data, graph);
+     
+    }
+    
+   
+    protected ShortestPathSolution djikstraRun(Label[] labelArray, ShortestPathData data, Graph graph) {
+        
+        // Notify observers about the first event (origin processed).
+        notifyOriginProcessed(data.getOrigin());
+
+       
         //variables pas nécessaire mais plus propre
         Node origin = data.getOrigin();
         Label originL = labelArray[data.getOrigin().getId()];
@@ -48,8 +55,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         Label destinationL = labelArray[data.getDestination().getId()];
         
         //variables pour compter 
+        
         int cptArc = 0;
-        int cptIter = 0;
+		int cptIter = 0;
         
         //initialisation du tas
         BinaryHeap<Label> heap = new BinaryHeap<>();
@@ -66,7 +74,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         	x.marquer();
         	notifyNodeMarked(x.sommetCourant());
         	
-        	for (Arc iter: x.sommetC.getSuccessors()) {
+        	for (Arc iter: x.sommetCourant().getSuccessors()) {
         		if (data.isAllowed(iter)) {
 	        		Label y = labelArray[iter.getDestination().getId()];
 	        		notifyNodeReached(iter.getDestination());
@@ -90,7 +98,8 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         // Destination has no predecessor, the solution is infeasible...
         
-        if(destinationL.estMarque() == false) {
+        ShortestPathSolution solution = null;
+		if(destinationL.estMarque() == false) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         } else {
         	// The destination has been found, notify the observers.
