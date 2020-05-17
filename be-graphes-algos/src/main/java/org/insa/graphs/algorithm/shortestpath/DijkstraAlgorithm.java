@@ -68,7 +68,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         Label x = null;
         
-        while (!labelArray[destination.getId()].estMarque()) {
+        while (!labelArray[destination.getId()].estMarque() && !heap.isEmpty() ) {
         	x = heap.findMin();
         	heap.remove(x);
         	x.marquer();
@@ -99,7 +99,7 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         // Destination has no predecessor, the solution is infeasible...
         
         ShortestPathSolution solution = null;
-		if(destinationL.estMarque() == false) {
+		if(destinationL.estMarque() == false || destinationL.getCout() == 0) {
         	solution = new ShortestPathSolution(data, Status.INFEASIBLE);
         } else {
         	// The destination has been found, notify the observers.
