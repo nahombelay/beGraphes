@@ -47,6 +47,10 @@ import org.insa.graphs.algorithm.AbstractSolution;
 import org.insa.graphs.algorithm.AlgorithmFactory;
 import org.insa.graphs.algorithm.carpooling.CarPoolingAlgorithm;
 import org.insa.graphs.algorithm.packageswitch.PackageSwitchAlgorithm;
+import org.insa.graphs.algorithm.pbOuvert.ProblemOuvertAlgorithm;
+import org.insa.graphs.algorithm.pbOuvert.ProblemOuvertData;
+import org.insa.graphs.algorithm.pbOuvert.ProblemOuvertSolution;
+import org.insa.graphs.algorithm.pbOuvert.ProblemOuvertTextObserver;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathData;
 import org.insa.graphs.algorithm.shortestpath.ShortestPathSolution;
@@ -108,7 +112,7 @@ public class MainWindow extends JFrame {
 
     // Algorithm panels
     private final List<AlgorithmPanel> algoPanels = new ArrayList<>();
-    private final AlgorithmPanel wccPanel, spPanel, cpPanel, psPanel;
+    private final AlgorithmPanel wccPanel, spPanel, cpPanel, psPanel, pbPanel;
 
     // Path panel
     private final PathsPanel pathPanel;
@@ -255,17 +259,74 @@ public class MainWindow extends JFrame {
         });
 
         cpPanel = new AlgorithmPanel(this, CarPoolingAlgorithm.class, "Car-Pooling", new String[] {
-                "Origin Car", "Origin Pedestrian", "Destination Car", "Destination Pedestrian" },
+                "Origin A", "Origin B", "Destination Car", "Destination Pedestrian" },
                 true);
 
         psPanel = new AlgorithmPanel(this, PackageSwitchAlgorithm.class, "Car-Pooling",
                 new String[] { "Oribin A", "Origin B", "Destination A", "Destination B" }, true);
+        
+        
+        pbPanel = new AlgorithmPanel(this, ProblemOuvertAlgorithm.class, "Problem Ouvert", new String[] {
+                "Origin A", "Origin B"}, true);
+        
+        pbPanel.addStartActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                StartActionEvent evt = (StartActionEvent) e;
+                ProblemOuvertData data = new ProblemOuvertData(graph, evt.getNodes().get(0),
+                        evt.getNodes().get(1), evt.getArcFilter());
+
+                ProblemOuvertAlgorithm pbAlgorithm = null;
+                try {
+                    pbAlgorithm = (ProblemOuvertAlgorithm) AlgorithmFactory
+                            .createAlgorithm(evt.getAlgorithmClass(), data);
+                }
+                catch (Exception e1) {
+                    JOptionPane.showMessageDialog(MainWindow.this,
+                            "An error occurred while creating the specified algorithm.",
+                            "Internal error: Algorithm instantiation failure",
+                            JOptionPane.ERROR_MESSAGE);
+                    e1.printStackTrace();
+                    return;
+                }
+
+                pbPanel.setEnabled(false);
+
+                if (evt.isGraphicVisualizationEnabled()) {
+                	pbAlgorithm.addObserver(new org.insa.graphs.gui.observers.ProblemOuvertGraphicObserver(drawing));
+                }
+                if (evt.isTextualVisualizationEnabled()) {
+                	pbAlgorithm.addObserver(new ProblemOuvertTextObserver(printStream));
+                }
+
+                final ProblemOuvertAlgorithm copyAlgorithm = pbAlgorithm;
+                launchThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Run the algorithm.
+                    	ProblemOuvertSolution solution = copyAlgorithm.run();
+                        // Add the solution to the solution panel (but do not display
+                        // overlay).
+                    	pbPanel.solutionPanel.addSolution(solution, false);
+                        // If the solution is feasible, add the path to the path panel.
+                        if (solution.isFeasible()) {
+                            pathPanel.addPath(solution.getPath());
+                        }
+                        // Show the solution panel and enable the shortest-path panel.
+                        pbPanel.solutionPanel.setVisible(true);
+                        pbPanel.setEnabled(true);
+                    }
+                });
+            }
+        });
+        
 
         // add algorithm panels
         algoPanels.add(wccPanel);
         algoPanels.add(spPanel);
         algoPanels.add(cpPanel);
         algoPanels.add(psPanel);
+        algoPanels.add(pbPanel);
 
         this.pathPanel = new PathsPanel(this);
 
@@ -763,17 +824,28 @@ public class MainWindow extends JFrame {
                 enableAlgorithmPanel(psPanel);
             }
         }));
+        
+     // Problem Ouvert
+        JMenuItem pbItem = new JMenuItem("Problem Ouvert");
+        pbItem.addActionListener(baf.createBlockingAction(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                enableAlgorithmPanel(pbPanel);
+            }
+        }));
 
         graphLockItems.add(wccItem);
         graphLockItems.add(spItem);
         graphLockItems.add(cpItem);
         graphLockItems.add(psItem);
+        graphLockItems.add(pbItem);
 
         algoMenu.add(wccItem);
         algoMenu.addSeparator();
         algoMenu.add(spItem);
         algoMenu.add(cpItem);
         algoMenu.add(psItem);
+        algoMenu.add(pbItem);
 
         // Create the menu bar.
         JMenuBar menuBar = new JMenuBar();
