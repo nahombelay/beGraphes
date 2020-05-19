@@ -17,7 +17,7 @@ public class ProblemOuvertSolution extends AbstractSolution {
     
     public ProblemOuvertSolution(ProblemOuvertData data, Status status, Path path) {  
 		super(data, status);
-		this.path = null;
+		this.path = path;
     }
     
     @Override

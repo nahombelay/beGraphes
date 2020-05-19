@@ -27,7 +27,6 @@ public class AStarAlgorithm extends DijkstraAlgorithm {
         //initilaisation de la liste des nodes
         List<Node> nodes = graph.getNodes();
         
-        
         double coutEstime;
         
         //l'initialisation des LabelAstar

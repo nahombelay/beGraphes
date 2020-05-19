@@ -34,7 +34,6 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         
         for (int i = 0; i < nbNodes; i++) {
         	labelArray[i] = new Label(nodes.get(i));
-        	
         }
         
         return djikstraRun(labelArray, data, graph);

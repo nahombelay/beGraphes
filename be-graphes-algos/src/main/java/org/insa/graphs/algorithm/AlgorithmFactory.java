@@ -7,7 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.insa.graphs.algorithm.pbOuvert.PointsRencontre;
+import org.insa.graphs.algorithm.pbOuvert.PointsRencontreAstar;
+import org.insa.graphs.algorithm.pbOuvert.PointsRencontreBF;
+import org.insa.graphs.algorithm.pbOuvert.PointsRencontreDijkstra;
 import org.insa.graphs.algorithm.pbOuvert.ProblemOuvertAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.AStarAlgorithm;
 import org.insa.graphs.algorithm.shortestpath.BellmanFordAlgorithm;
@@ -39,7 +41,11 @@ public class AlgorithmFactory {
         // Register your algorithms here:
         // registerAlgorithm(CarPoolingAlgorithm.class, "My Awesome Algorithm",
         // MyCarPoolingAlgorithm.class);
-        registerAlgorithm(ProblemOuvertAlgorithm.class, "Points Rencontre", PointsRencontre.class);
+        registerAlgorithm(ProblemOuvertAlgorithm.class, "Points Rencontre Bellman-Ford", PointsRencontreBF.class);
+        registerAlgorithm(ProblemOuvertAlgorithm.class, "Points Rencontre Dijkstra", PointsRencontreAstar.class);
+        registerAlgorithm(ProblemOuvertAlgorithm.class, "Points Rencontre A*", PointsRencontreDijkstra.class);
+        
+        
     }
 
     /**

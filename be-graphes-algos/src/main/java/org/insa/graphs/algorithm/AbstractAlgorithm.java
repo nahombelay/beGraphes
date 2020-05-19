@@ -84,4 +84,5 @@ public abstract class AbstractAlgorithm<Observer> {
      */
     protected abstract AbstractSolution doRun();
 
+
 }

@@ -11,19 +11,20 @@ public class LabelAstar extends Label {
 	}
 
 	public double getEstimatedCost() {
-		return EstimatedCost;
+		return this.EstimatedCost;
 	}
 
 	public void setEstimatedCost(double estimatedCost) {
 		EstimatedCost = estimatedCost;
 	}
 	
+	@Override
 	public double getTotalCost() {
-		return EstimatedCost + this.cout;
+		return this.getEstimatedCost() + this.getCout();
 	}
 	
 	public int compareTo(LabelAstar other) {
-		return Double.compare(this.getTotalCost(), other.getTotalCost());
+		return Double.compare(this.getEstimatedCost(), other.getTotalCost() - other.getCout());
 	}
 	
 }

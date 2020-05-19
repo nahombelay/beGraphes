@@ -22,7 +22,6 @@ import org.insa.graphs.model.io.BinaryGraphReader;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-
 public class DijkstraTest {
 	
 	// Small graph use for test
