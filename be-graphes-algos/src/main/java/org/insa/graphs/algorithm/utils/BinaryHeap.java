@@ -122,6 +122,31 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
     public boolean isEmpty() {
         return this.currentSize == 0;
     }
+    
+    public boolean isValid(int index) {
+    	boolean ret;
+    	if (this.currentSize <= 1) {
+    		ret = true;
+    	} else {
+    		ret = true;
+    		E current = this.array.get(0);
+	        int indexleft = indexLeft(index);
+	        int indexright = indexleft + 1;
+	        
+	        if (indexleft < this.currentSize) {
+	            E left = this.array.get(indexleft);
+	            if (current.compareTo(left) < 0)
+	                ret = this.isValid(indexleft);
+	        }
+	        if (indexright < this.currentSize) {
+	            E right = this.array.get(indexright);
+	            if (current.compareTo(right) < 0)
+	                ret = this.isValid(indexright);
+	        }
+    	}
+    	
+    	return ret;
+    }
 
     @Override
     public int size() {

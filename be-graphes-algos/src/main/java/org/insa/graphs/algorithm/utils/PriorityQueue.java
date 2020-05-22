@@ -78,4 +78,5 @@ public interface PriorityQueue<E extends Comparable<E>> {
      */
     public E deleteMin() throws EmptyPriorityQueueException;
 
+    public boolean isValid(int index);
 }
