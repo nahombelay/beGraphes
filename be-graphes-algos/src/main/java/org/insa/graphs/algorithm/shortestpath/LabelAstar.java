@@ -5,9 +5,9 @@ public class LabelAstar extends Label {
 
 	private double EstimatedCost;
 	
-	public LabelAstar(Node SommetCourant) {
+	public LabelAstar(Node SommetCourant, double EstimatedCost) {
 		super(SommetCourant);
-		this.EstimatedCost = Double.POSITIVE_INFINITY;
+		this.EstimatedCost = EstimatedCost;
 	}
 
 	public double getEstimatedCost() {

@@ -143,6 +143,13 @@ public class PointsRencontreDijkstra extends ProblemOuvertAlgorithm {
     	// Reverse the path...
         Collections.reverse(arcs);
         
+        //critere de comparasion, décommenter selon le critere choisi
+        double critere;
+        
+        //critere de durrée
+        critere = 0.15;
+        //critere de distance
+        //critere = 0.30;
         
         Path path = new Path(graph, arcs);
         double cheminLen = path.getLength();
@@ -153,7 +160,9 @@ public class PointsRencontreDijkstra extends ProblemOuvertAlgorithm {
         	cout1 = labelArray1[i].getCout();
         	cout2 = labelArray2[i].getCout();
         	if (Double.isFinite(cout1) && (Double.isFinite(cout2))) {
-        		if (Math.abs(cout1 -cout2) <= 0.15*(cout1 + cout2) && (cout1 + cout2) <= 1.30*cheminLen) {
+        		//if ((1-critere)*cout2 <= (1+critere)*cout1 && (1+critere)*cout2 >= (1-critere)*cout1){
+        		if (((1-critere)*cout1 <= cout2 && cout2 <=(1+critere)*cout1) && ((1-critere)*cout2 <= cout1 && cout1 <=(1+critere)*cout2)){
+        			System.out.println("cout1 : " + cout1 + " cout2: " + cout2);
         			notifyNodeReached(labelArray1[i].sommetCourant());
         		}
         	}

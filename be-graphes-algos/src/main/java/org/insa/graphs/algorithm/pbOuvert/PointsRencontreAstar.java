@@ -42,19 +42,17 @@ public class PointsRencontreAstar extends PointsRencontreDijkstra {
         //l'initialisation des labels
         
         for (Node node: nodes) {
-        	labelArray1[node.getId()] = new LabelAstar(node);
-        	labelArray2[node.getId()] = new LabelAstar(node);
         	
             if(data.getMode() == AbstractInputData.Mode.TIME) {
                 //fastest
-            	coutEstime = node.getPoint().distanceTo(data.getDestination().getPoint())/(double)this.data.getMaximumSpeed();
+            	coutEstime = node.getPoint().distanceTo(data.getDestination().getPoint())/(double)graph.getGraphInformation().getMaximumSpeed();
             } else {
                 //shortest
             	coutEstime = node.getPoint().distanceTo(data.getDestination().getPoint());
             }
             
-            labelArray1[node.getId()].setEstimatedCost(coutEstime);
-            labelArray2[node.getId()].setEstimatedCost(coutEstime);
+            labelArray1[node.getId()] = new LabelAstar(node, coutEstime);
+        	labelArray2[node.getId()] = new LabelAstar(node, coutEstime);
         }
       //________________________________________________________________
         //first cycle

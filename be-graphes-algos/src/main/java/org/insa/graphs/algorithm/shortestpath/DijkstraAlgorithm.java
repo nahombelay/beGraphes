@@ -10,7 +10,7 @@ import org.insa.graphs.algorithm.utils.ElementNotFoundException;
 
 @SuppressWarnings("unused")
 public class DijkstraAlgorithm extends ShortestPathAlgorithm {
-
+	public int sommetIn, sommetOut = 0;
 	
     public DijkstraAlgorithm(ShortestPathData data) {
         super(data);
@@ -64,12 +64,15 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         //on insere origin dans le tas
         labelArray[origin.getId()].setCout(0);
         heap.insert(labelArray[origin.getId()]);
+        sommetIn++;
         
         Label x = null;
         
         while (!labelArray[destination.getId()].estMarque() && !heap.isEmpty() ) {
+        	//System.out.println(heap.isValid(0));
         	x = heap.findMin();
         	heap.remove(x);
+        	sommetOut++;
         	x.marquer();
         	notifyNodeMarked(x.sommetCourant());
         	
@@ -82,12 +85,14 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
 		        			if (y.getCout() > x.getCout() + data.getCost(iter)) {
 		        				try {
 		        					heap.remove(y);
+		        					sommetOut++;
 		        				} catch(ElementNotFoundException e) {
 		        					;
 		    		    		}
 		        				y.setCout(x.getCout() + data.getCost(iter));
 		        				y.setPere(iter);
 		        				heap.insert(y);
+		        				sommetIn++;
 		        			}
 	        		}
         		}
@@ -120,6 +125,9 @@ public class DijkstraAlgorithm extends ShortestPathAlgorithm {
         }
         //verification nbr arc et iterations
         //System.out.println("Nbr arcs: " + cptArc + " NbrIer : " + cptIter);
+		
+		//nombre empilation et dépilation
+		System.out.println("Sommet ajoutés dans le tas: " + sommetIn + " Sommet enlevés du tas: " + sommetOut);
         return solution;
     }
 

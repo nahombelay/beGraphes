@@ -125,13 +125,23 @@ public class PointsRencontreBF extends ProblemOuvertAlgorithm {
         // Reverse the path...
         Collections.reverse(arcs);
         
+        //critere de comparasion, décommenter selon le critere choisi
+        double critere;
+        double cout1, cout2;
+        //critere de durrée
+        critere = 0.15;
+        //critere de distance
+        //critere = 0.30;
+        
         chemin = new Path(graph, arcs);
-        double cheminLen = chemin.getLength();
         
 		for (Node node: graph.getNodes()) {
         	if (Double.isFinite(distances1[node.getId()]) && Double.isFinite(distances2[node.getId()])) {
-        		if (Math.abs(distances1[node.getId()]- distances2[node.getId()]) <= 0.15*(distances2[node.getId()] + distances2[node.getId()])/2 &&
-        				(distances1[node.getId()] + distances2[node.getId()]) <= 1.30*cheminLen){
+        		cout1 = distances1[node.getId()];
+        		cout2 = distances2[node.getId()];
+        		//if ((1-critere)*cout2 <= (1+critere)*cout1 && (1+critere)*cout2 >= (1-critere)*cout1){
+        		if (((1-critere)*cout1 <= cout2 && cout2 <=(1+critere)*cout1) && ((1-critere)*cout2 <= cout1 && cout1 <=(1+critere)*cout2)){
+        			System.out.println("cout1 : " + cout1 + " cout2: " + cout2);
 	        		notifyNodeReached(node);
 	        	}
         	}

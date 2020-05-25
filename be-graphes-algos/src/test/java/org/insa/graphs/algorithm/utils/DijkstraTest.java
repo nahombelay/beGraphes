@@ -6,6 +6,8 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -34,14 +36,9 @@ public class DijkstraTest {
 	//graphe non-routière
 	private static Graph carre;
 	
-	//Liste de nodes pour le graphe haute-garonne
-	private static List<Node> nodesINSA;
 	
-	//Liste de nodes pour le graphe guadeloupe
-	private static List<Node> nodesGdlpe;	
-
-	//Liste de nodes pour le graphe carre
-	private static List<Node> nodesCarre;	
+	//Array qui contient les nodes des trois cartes
+	private static ArrayList<Graph> ListCartes;
 	
 	//ArcInspector
 	private static ArcInspector timeInsp, distanceInsp;
@@ -71,14 +68,8 @@ public class DijkstraTest {
 		carre = new BinaryGraphReader(DIS3).read();
 		
 		
-		//initialisation des nodes de guadeloupe
-		nodesGdlpe = guadeloupe.getNodes(); 
-		
-		//initialisation des nodes de haute-garonne
-		nodesINSA = insa.getNodes(); 
-		
-		//initialisation des nodes de Carre
-		nodesCarre = carre.getNodes(); 
+		//initialise de NodesCartes
+		ListCartes = new ArrayList<Graph>(Arrays.asList(insa,  guadeloupe));
 		
 		//initialisation des ArcInspector
 		timeInsp =  ArcInspectorFactory.getAllFilters().get(0);
@@ -129,51 +120,44 @@ public class DijkstraTest {
 	}
 	
 	
+	
 	@Test
 	public void testOracle() {
 		//Verifie que le résultat généré par Dijkstra est le même que celui généré par Bellman-Ford
-		
-		//chemins Randoms pour INSA avec temps et vérifie que la distance est égale
-		do {
-			randomOrigin = nodesINSA.get(getRandom.nextInt(nodesINSA.size()));
-			randomDest = nodesINSA.get(getRandom.nextInt(nodesINSA.size()));
-		} while ( randomOrigin.equals(randomDest));
-		
-		cheminData = new ShortestPathData(insa, randomOrigin, randomDest, timeInsp);
-		cheminSolution = new DijkstraAlgorithm(cheminData).doRun();
-		cheminSolutionOracle = new BellmanFordAlgorithm(cheminData).doRun();
-		
-		//vérifir chemin est feasible et valide
-		assertTrue(cheminSolution.isFeasible());
-		assertTrue(cheminSolution.getPath().isValid());
-		
-		
-		//verifie que la distance est identique
-		assertEquals(cheminSolutionOracle.getPath().getLength(), cheminSolution.getPath().getLength(), 0);
-		
-		//verifie que le tps minimum est indentique est identique
-		assertEquals(cheminSolutionOracle.getPath().getMinimumTravelTime(), cheminSolution.getPath().getMinimumTravelTime(), 0);
-		
-		//chemins Randoms pour carre avec distance et vérifie que la distance est égale
-		do {
-			randomOrigin = nodesCarre.get(getRandom.nextInt(nodesCarre.size()));
-			randomDest = nodesCarre.get(getRandom.nextInt(nodesCarre.size()));
-		} while ( randomOrigin.equals(randomDest));
-		
-		cheminData = new ShortestPathData(carre, randomOrigin, randomDest, distanceInsp);
-		cheminSolution = new DijkstraAlgorithm(cheminData).doRun();
-		cheminSolutionOracle = new BellmanFordAlgorithm(cheminData).doRun();
-		
-		//vérifier chemin est feasible et valide
-		assertTrue(cheminSolution.isFeasible());
-		assertTrue(cheminSolution.getPath().isValid());
-		
-		
-		//verifie que la distance est identique
-		assertEquals(cheminSolutionOracle.getPath().getLength(), cheminSolution.getPath().getLength(), 0);
-		
-		//verifie que le tps minimum est indentique est identique
-		assertEquals(cheminSolutionOracle.getPath().getMinimumTravelTime(), cheminSolution.getPath().getMinimumTravelTime(), 0);
+		for (Graph carte: ListCartes) {
+			for (int i = 0; i < 3; i++) {
+				//test avec time et distance inspector
+				for (ArcInspector insp: (new ArrayList<ArcInspector>(Arrays.asList(timeInsp, distanceInsp)))) {
+					//chemins Randoms pour INSA avec temps et vérifie que la distance est égale
+					do {
+						randomOrigin = carte.getNodes().get(getRandom.nextInt(carte.size()-1));
+						randomDest = carte.getNodes().get(getRandom.nextInt(carte.size()-1));
+					} while ( randomOrigin.equals(randomDest));
+					
+					cheminData = new ShortestPathData(carte, randomOrigin, randomDest, insp);
+					cheminSolution = new DijkstraAlgorithm(cheminData).doRun();
+					cheminSolutionOracle = new BellmanFordAlgorithm(cheminData).doRun();
+					//System.out.println("Carte :" + carte.getMapName() + " origin: " + randomOrigin.getId() + " destination: " + randomDest.getId());
+					
+					if (cheminSolution.isFeasible()) {
+						assertTrue(cheminSolution.isFeasible());
+						
+						if (cheminSolution.getPath().isValid()) {
+							assertTrue(cheminSolution.getPath().isValid());
+							
+							//verifie que la distance est identique
+							assertEquals(cheminSolutionOracle.getPath().getLength(), cheminSolution.getPath().getLength(), 0);
+							
+							//verifie que le tps minimum est indentique est identique
+							assertEquals(cheminSolutionOracle.getPath().getMinimumTravelTime(), cheminSolution.getPath().getMinimumTravelTime(), 0);
+						}
+					}
+					
+				}
+				
+			}
+		}
+
 		
 	}
 	

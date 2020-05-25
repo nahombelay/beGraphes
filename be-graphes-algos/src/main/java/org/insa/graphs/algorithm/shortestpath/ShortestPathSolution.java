@@ -6,7 +6,6 @@ import org.insa.graphs.model.Path;
 import org.insa.graphs.algorithm.AbstractSolution;
 
 public class ShortestPathSolution extends AbstractSolution {
-
     // Optimal solution.
     private final Path path;
 
@@ -45,6 +44,7 @@ public class ShortestPathSolution extends AbstractSolution {
     public Path getPath() {
         return path;
     }
+    
 
     @Override
     public String toString() {
