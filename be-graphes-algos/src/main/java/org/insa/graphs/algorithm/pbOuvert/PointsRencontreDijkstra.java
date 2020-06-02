@@ -147,9 +147,9 @@ public class PointsRencontreDijkstra extends ProblemOuvertAlgorithm {
         double critere;
         
         //critere de durrée
-        critere = 0.15;
+        //critere = 0.15;
         //critere de distance
-        //critere = 0.30;
+        critere = 0.30;
         
         Path path = new Path(graph, arcs);
         double cheminLen = path.getLength();

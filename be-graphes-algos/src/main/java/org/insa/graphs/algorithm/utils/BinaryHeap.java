@@ -135,13 +135,19 @@ public class BinaryHeap<E extends Comparable<E>> implements PriorityQueue<E> {
 	        
 	        if (indexleft < this.currentSize) {
 	            E left = this.array.get(indexleft);
-	            if (current.compareTo(left) < 0)
-	                ret = this.isValid(indexleft);
+	            if (current.compareTo(left) > 0) {
+	            	ret = false;
+	            } else {
+	            	ret = this.isValid(indexleft);
+	            }
 	        }
 	        if (indexright < this.currentSize) {
 	            E right = this.array.get(indexright);
-	            if (current.compareTo(right) < 0)
-	                ret = this.isValid(indexright);
+	            if (current.compareTo(right) > 0) {
+	            	ret = false;
+	            }  else {
+	            	ret = this.isValid(indexright);
+	            }
 	        }
     	}
     	
